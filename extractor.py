@@ -76,9 +76,9 @@ class PathType(object):
 
 def restartContainerWithDomains(domains):
     client = docker.from_env()
-    container = client.containers.list(filters = {"label" : "com.github.SnowMB.traefik-certificate-extractor.restart_domain"})
+    container = client.containers.list(filters = {"label" : "traefik-certificate-extractor.restart_domain"})
     for c in container:
-        restartDomains = str.split(c.labels["com.github.SnowMB.traefik-certificate-extractor.restart_domain"], ',')
+        restartDomains = str.split(c.labels["traefik-certificate-extractor.restart_domain"], ',')
         if not set(domains).isdisjoint(restartDomains):
             print('restarting container ' + c.id)
             if not args.dry:
@@ -210,14 +210,14 @@ class Handler(FileSystemEventHandler):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Extract traefik letsencrypt certificates.')
-    parser.add_argument('-c', '--certificate', default='acme.json', type=PathType(
+    parser.add_argument('-c', '--certificate', default='/data/acme.json', type=PathType(
         exists=True), help='file that contains the traefik certificates (default acme.json)')
     parser.add_argument('-d', '--directory', default='.',
                         type=PathType(type='dir'), help='output folder')
     parser.add_argument('-f', '--flat', action='store_true',
                         help='outputs all certificates into one folder')
     parser.add_argument('-r', '--restart_container', action='store_true',
-                        help="uses the docker API to restart containers that are labeled with 'com.github.SnowMB.traefik-certificate-extractor.restart_domain=<DOMAIN>' if the domain name of a generated certificates matches. Multiple domains can be seperated by ','")
+                        help="uses the docker API to restart containers that are labeled with 'traefik-certificate-extractor.restart_domain=<DOMAIN>' if the domain name of a generated certificates matches. Multiple domains can be seperated by ','")
     parser.add_argument('--dry-run', action='store_true', dest='dry',
                         help="Don't write files and do not start docker containers.")
     group = parser.add_mutually_exclusive_group()
