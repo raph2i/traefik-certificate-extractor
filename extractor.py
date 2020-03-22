@@ -160,6 +160,9 @@ def createCerts(args):
                     with (directory / 'key.pem').open('w') as f:
                         f.write(privatekey)
 
+                    with (directory / 'privkey.pem').open('w') as f:
+                        f.write(privatekey)
+
                     with (directory / 'cert.pem').open('w') as f:
                         f.write(cert)
 
