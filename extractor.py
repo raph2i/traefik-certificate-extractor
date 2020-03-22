@@ -136,6 +136,9 @@ def createCerts(args):
                         f.write(fullchain)
                     with (directory / name + '.chain.pem').open('w') as f:
                         f.write(chain)
+                    with (directory / name + '.fullkey.pem').open('w') as f:
+                        f.write(fullchain + '\n' + privatekey)
+
 
                     if sans:
                         for name in sans:
@@ -145,6 +148,9 @@ def createCerts(args):
                                 f.write(fullchain)
                             with (directory / name + '.chain.pem').open('w') as f:
                                 f.write(chain)
+                            with (directory / name + '.fullkey.pem').open('w') as f:
+                                f.write(fullchain + '\n' + privatekey)
+
                 else:
                     directory = directory / name
                     if not directory.exists():
@@ -162,6 +168,9 @@ def createCerts(args):
 
                     with (directory / 'fullchain.pem').open('w') as f:
                         f.write(fullchain)
+
+                    with (directory / 'fullkey.pem').open('w') as f:
+                        f.write(fullchain + '\n' + privatekey)
 
             print('Extracted certificate for: ' + name +
                   (', ' + ', '.join(sans) if sans else ''))
