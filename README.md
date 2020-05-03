@@ -9,11 +9,10 @@ Note: This version differs from original in that:
 * Support for ACME v1 has been removed.  You must be using the acme_v2 url in your resolver(s)
 * Added support for multiple resolvers
 * An initial dump of the certs will be performed before starting to watch the acme.json file for changes
-* _**Not thoroughly tested**_. Specifically, I don't know if SANs work since I don't use them.
 
 ## Installation
 ```shell
-git clone https://github.com/snowmb/traefik-certificate-extractor
+git clone https://github.com/raph2i/traefik-certificate-extractor
 cd traefik-certificate-extractor
 ```
 
@@ -54,16 +53,20 @@ certs/
         chain.pem
         fullchain.pem
         privkey.pem
+        fullkey.pem
     sub.example.nl/
         cert.pem
         chain.pem
         fullchain.pem
         privkey.pem
+        fullkey.pem
 certs_flat/
     example.com.crt
     example.com.key
     example.com.chain.pem
+    example.com.fullkey.pem
     sub.example.nl.crt
     sub.example.nl.key
     sub.example.nl.chain.pem
+    sub.example.nl.fullkey.pem
 ```
