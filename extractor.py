@@ -100,8 +100,9 @@ def createCerts(args):
             print('Unable to locate account or certificates in json')
             return
     # if Resolver is defined, but not used, return
-        if resolver['Certificates'] == 'null':
-            return
+        if resolver['Certificates'] is None:
+            print('resolver without cert... continue...')
+            continue
     # Loop over all certificates
         for c in resolver['Certificates']:
             # pprint(c)
