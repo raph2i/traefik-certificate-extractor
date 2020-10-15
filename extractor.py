@@ -104,83 +104,82 @@ def createCerts(args):
             return
     # Loop over all certificates
         for c in resolver['Certificates']:
-            if c is not None:
             # pprint(c)
-                name = c['domain']['main']
-                privatekey = c['key']
-                fullchain = c['certificate']
-                if 'sans' in c['domain'].keys():
-                    sans = c['domain']['sans']
-                else:
-                    sans = None
+            name = c['domain']['main']
+            privatekey = c['key']
+            fullchain = c['certificate']
+            if 'sans' in c['domain'].keys():
+                sans = c['domain']['sans']
+            else:
+                sans = None
             # sans = c['Domain']['SANs']
 
-                if (args.include and name not in args.include) or (args.exclude and name in args.exclude):
-                    continue
+            if (args.include and name not in args.include) or (args.exclude and name in args.exclude):
+                continue
 
             # Decode private key, certificate and chain
-                privatekey = b64decode(privatekey).decode('utf-8')
-                fullchain = b64decode(fullchain).decode('utf-8')
-                start = fullchain.find('-----BEGIN CERTIFICATE-----', 1)
-                cert = fullchain[0:start]
-                chain = fullchain[start:]
+            privatekey = b64decode(privatekey).decode('utf-8')
+            fullchain = b64decode(fullchain).decode('utf-8')
+            start = fullchain.find('-----BEGIN CERTIFICATE-----', 1)
+            cert = fullchain[0:start]
+            chain = fullchain[start:]
 
-                if not args.dry:
+            if not args.dry:
                 # Create domain     directory if it doesn't exist
-                    directory = Path(args.directory)
+                directory = Path(args.directory)
+                if not directory.exists():
+                    directory.mkdir()
+  
+                if args.flat:
+                # Write private key, certificate and chain to flat files
+                    with (directory / name + '.key').open('w') as f:
+                        f.write(privatekey)
+                    with (directory / name + '.crt').open('w') as f:
+                        f.write(fullchain)
+                    with (directory / name + '.chain.pem').open('w') as f:
+                        f.write(chain)
+                    with (directory / name + '.fullkey.pem').open('w') as f:
+                        f.write(fullchain + '\n' + privatekey)
+
+
+                    if sans:
+                        for name in sans:
+                            with (directory / name + '.key').open('w') as f:
+                                f.write(privatekey)
+                            with (directory / name + '.crt').open('w') as f:
+                                f.write(fullchain)
+                            with (directory / name + '.chain.pem').open('w') as f:
+                                f.write(chain)
+                            with (directory / name + '.fullkey.pem').open('w') as f:
+                                f.write(fullchain + '\n' + privatekey)
+  
+                else:
+                    directory = directory / name
                     if not directory.exists():
                         directory.mkdir()
-  
-                    if args.flat:
-                    # Write private key, certificate and chain to flat files
-                        with (directory / name + '.key').open('w') as f:
-                            f.write(privatekey)
-                        with (directory / name + '.crt').open('w') as f:
-                            f.write(fullchain)
-                        with (directory / name + '.chain.pem').open('w') as f:
-                            f.write(chain)
-                        with (directory / name + '.fullkey.pem').open('w') as f:
-                            f.write(fullchain + '\n' + privatekey)
-
-
-                        if sans:
-                            for name in sans:
-                                with (directory / name + '.key').open('w') as f:
-                                    f.write(privatekey)
-                                with (directory / name + '.crt').open('w') as f:
-                                    f.write(fullchain)
-                                with (directory / name + '.chain.pem').open('w') as f:
-                                    f.write(chain)
-                                with (directory / name + '.fullkey.pem').open('w') as f:
-                                    f.write(fullchain + '\n' + privatekey)
-  
-                    else:
-                        directory = directory / name
-                        if not directory.exists():
-                            directory.mkdir()
 
                     # Write private key, certificate and chain to file
-                        with (directory / 'key.pem').open('w') as f:
-                            f.write(privatekey)
+                    with (directory / 'key.pem').open('w') as f:
+                        f.write(privatekey)
 
-                        with (directory / 'privkey.pem').open('w') as f:
-                            f.write(privatekey)
+                    with (directory / 'privkey.pem').open('w') as f:
+                        f.write(privatekey)
 
-                        with (directory / 'cert.pem').open('w') as f:
-                            f.write(cert)
+                    with (directory / 'cert.pem').open('w') as f:
+                        f.write(cert)
 
-                        with (directory / 'chain.pem').open('w') as f:
-                            f.write(chain)
+                    with (directory / 'chain.pem').open('w') as f:
+                        f.write(chain)
 
-                        with (directory / 'fullchain.pem').open('w') as f:
-                            f.write(fullchain)
+                    with (directory / 'fullchain.pem').open('w') as f:
+                        f.write(fullchain)
 
-                        with (directory / 'fullkey.pem').open('w') as f:
-                            f.write(fullchain + '\n' + privatekey)
+                    with (directory / 'fullkey.pem').open('w') as f:
+                        f.write(fullchain + '\n' + privatekey)
 
-                print('Extracted certificate for: ' + name +
-                      (', ' + ', '.join(sans) if sans else ''))
-                names.append(name)
+            print('Extracted certificate for: ' + name +
+                (', ' + ', '.join(sans) if sans else ''))
+            names.append(name)
 
     return names
 
